@@ -15,7 +15,7 @@ handle dw 0
 
 
 filename db "result.txt", 0
-filepath db "a.txt", 0
+filepath db 50 DUP(0)
 ;filename db "C:\result.txt", 0
 ;filepath db "C:\a.txt", 0 
 
@@ -345,8 +345,25 @@ writeToNew ENDP
 ;=====================================================================================================================================================================================
 ;=====================================================================================================================================================================================
 start:
+mov cl, es:80h
 mov ax, @data
 mov ds, ax
+cmp cl, 0 ;fi size 0, no parametrs
+je terminate
+
+mov si, 81h ;skip space
+xor di,di
+
+inc si ;skip space
+dec cl ;skip space
+
+get_parm:
+    mov al, es:si
+    inc si
+    mov [filepath + di] , al  ; помещаем его в filepath 
+    inc di
+loop get_parm
+
 jmp string_input
 
 string_error:
